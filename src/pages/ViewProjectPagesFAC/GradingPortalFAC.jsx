@@ -709,6 +709,7 @@
 //     </Stack>
 //   );
 // };
+
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
@@ -744,6 +745,8 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import BackButton from "./../../components/BackButton.jsx";
 import ProjectTag from "../../components/ProjectTag.jsx";
+import api from "../../components/api.jsx";
+
 
 function GradingPortalFAC() {
   const param = useParams();
@@ -760,20 +763,122 @@ function GradingPortalFAC() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("error");
 
+  const dummy_response = {
+    Status: "Success",
+    Data: {
+      group_id: "GRP001",
+      components: [
+        {
+          component_id: "COMP1",
+          title: "Semester 1",
+          locked: false,
+          sub_components: [
+            {
+              component_id: "SUB1",
+              title: "Guide_30",
+              max_marks: 30,
+            },
+            {
+              component_id: "SUB2",
+              title: "Presentation_20",
+              max_marks: 20,
+            },
+            {
+              component_id: "SUB3",
+              title: "Report_50",
+              max_marks: 50,
+            },
+          ],
+        },
+        {
+          component_id: "COMP2",
+          title: "Semester 2",
+          locked: false,
+          sub_components: [
+            {
+              component_id: "SUB4",
+              title: "Guide_40",
+              max_marks: 40,
+            },
+            {
+              component_id: "SUB5",
+              title: "Presentation_30",
+              max_marks: 30,
+            },
+            {
+              component_id: "SUB6",
+              title: "Viva_30",
+              max_marks: 30,
+            },
+          ],
+        },
+      ],
+      grades: [
+        {
+          id: "STU001",
+          name: "John Doe",
+          enrollment: "ENR001",
+          "Semester 1": {
+            Guide_30: { marks: "25", status: "Present" },
+            Presentation_20: { marks: "18", status: "Present" },
+            Report_50: { marks: "45", status: "Present" },
+          },
+          "Semester 2": {
+            Guide_40: { marks: "", status: "yet to enter marks" },
+            Presentation_30: { marks: "", status: "yet to enter marks" },
+            Viva_30: { marks: "", status: "yet to enter marks" },
+          },
+        },
+        {
+          id: "STU002",
+          name: "Jane Smith",
+          enrollment: "ENR002",
+          "Semester 1": {
+            Guide_30: { marks: "28", status: "Present" },
+            Presentation_20: { marks: "15", status: "Present" },
+            Report_50: { marks: "40", status: "Present" },
+          },
+          "Semester 2": {
+            Guide_40: { marks: "35", status: "Present" },
+            Presentation_30: { marks: "25", status: "Present" },
+            Viva_30: { marks: "28", status: "Present" },
+          },
+        },
+        {
+          id: "STU003",
+          name: "Alice Johnson",
+          enrollment: "ENR003",
+          "Semester 1": {
+            Guide_30: { marks: "", status: "Absent" },
+            Presentation_20: { marks: "", status: "Absent" },
+            Report_50: { marks: "", status: "Absent" },
+          },
+          "Semester 2": {
+            Guide_40: { marks: "", status: "Incomplete" },
+            Presentation_30: { marks: "", status: "Incomplete" },
+            Viva_30: { marks: "", status: "Incomplete" },
+          },
+        },
+      ],
+    },
+  };
+
   const fetchGroupInfoMutation = useMutation({
     mutationFn: async (id) => {
-      try {
-        const response = await api.post("/api/faculty/getGroupInfo", {
-          groupId: id,
-        });
-        if (response.data.Status === "Success") {
-          return response.data;
-        } else {
-          throw new Error("API returned non-success status");
-        }
-      } catch (error) {
-        throw new Error(`Failed to fetch group info: ${error.message}`);
-      }
+      // try {
+      //   const response = await api.post("/api/faculty/getGroupInfo", {
+      //     groupId: id,
+      //   });
+      //   if (response.data.Status === "Success") {
+      //     return response.data;
+      //   } else {
+      //     throw new Error("API returned non-success status");
+      //   }
+      // } catch (error) {
+      //   throw new Error(`Failed to fetch group info: ${error.message}`);
+      // }
+      
+      return dummy_response;
     },
     onSuccess: (response) => {
       if (response.Status === "Success") {
@@ -791,7 +896,7 @@ function GradingPortalFAC() {
                   student[component.title][sub.title]?.status ===
                   "yet to enter marks"
                     ? "Absent"
-                    : student[component.title][sub.title]?.status || "Absent",
+                    : student[component.title][sub.title]?.status,
               }));
 
               // Calculate total from existing marks during initialization
@@ -853,8 +958,10 @@ function GradingPortalFAC() {
     for (const student of componentGrades) {
       // Check if the student has at least one mark or a valid status
       const hasMarks = student.subComponents.some((sub) => sub.marks !== "");
-      const hasStatus = ["Absent", "Incomplete", "Withheld"].includes(student.status);
-  
+      const hasStatus = ["Absent", "Incomplete", "Withheld"].includes(
+        student.status
+      );
+
       if (!hasMarks && !hasStatus) {
         setAlertMessage(
           `For ${student.name} (${component.title}): Please enter at least one mark or select a status (Absent/Incomplete/Withheld).`
@@ -866,10 +973,16 @@ function GradingPortalFAC() {
       // If there are any marks, validate all subComponents
       if (hasMarks) {
         for (const sub of student.subComponents) {
-          console.log(`Validating ${student.name}, ${sub.title}: marks=${sub.marks}, max_marks=${sub.max_marks}`); // Debug log
+          console.log(
+            `Validating ${student.name}, ${sub.title}: marks=${sub.marks}, max_marks=${sub.max_marks}`
+          ); // Debug log
           if (sub.marks === "") {
             // Allow empty fields only if no other marks exist for this student
-            if (student.subComponents.some((s) => s.marks !== "" && s.title !== sub.title)) {
+            if (
+              student.subComponents.some(
+                (s) => s.marks !== "" && s.title !== sub.title
+              )
+            ) {
               setAlertMessage(
                 `For ${student.name} (${component.title}, ${sub.title}): All fields must be filled when entering partial marks.`
               );
@@ -1396,9 +1509,9 @@ function GradingPortalFAC() {
   };
   return (
     <Box sx={{ p: 2 }}>
-        <Typography variant="h5" ml={2}>
-          Grading Portal
-        </Typography>
+      <Typography variant="h5" ml={2}>
+        Grading Portal
+      </Typography>
       {fetchedGroupInfo && (
         <>
           <Stack
