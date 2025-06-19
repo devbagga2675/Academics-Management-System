@@ -151,6 +151,7 @@ export default function SignIn() {
               <strong>Important Note</strong>
             </Typography>
             <Typography variant="body">
+              The actual system is under development.
               This is only a prototype of the actual system, intended for
               demonstration of the User Interface and Functionalities.
               <br />
