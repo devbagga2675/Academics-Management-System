@@ -11,6 +11,7 @@ const AuthProvider = ({ children }) => {
     const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
     return storedIsLoggedIn === "true"; // Simplified boolean conversion
   });
+  
   const [userType, setUserType] = useState('faculty');
   const [userMeta, setUserMeta] = useState({
     email: 'dev@gmail.com',

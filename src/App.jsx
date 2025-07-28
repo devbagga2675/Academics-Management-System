@@ -37,7 +37,9 @@ function App() {
             <Route path="/" element={<SignIn />} />
             <Route path="/resetpassword" element={<ResetPassword />} />
             <Route path="/signin" element={<Navigate to={"/"} />} />
+
             <Route element={<PrivateRoute />}>
+              {/* faculty side routes */}
               <Route element={<FacultyRoute />}>
                 <Route
                   path="/gradingportal/:id"
@@ -58,6 +60,7 @@ function App() {
                 </Route>
               </Route>
 
+              {/* student side routes */}
               <Route path="/studentdashboard" element={<DashboardSTU />}>
                 <Route index element={<ViewGroupsList />} />
                 <Route path="ProjectDetails/:id" element={<ViewProject />}>
@@ -68,10 +71,10 @@ function App() {
                   <Route path="projecttimeline" element={<ProjectTimeline />} />
                 </Route>
               </Route>
-              <Route path="/admindashboard" element={<DashboardSuperUser/>}>
-                <Route index element={<Dashboard/>}/>
-                <Route path="reports" element={<Reports/>}/>
-                <Route path="activitylogs" element={<ActivityLogs/>}/>
+              <Route path="/admindashboard" element={<DashboardSuperUser />}>
+                <Route index element={<Dashboard />} />
+                <Route path="reports" element={<Reports />} />
+                <Route path="activitylogs" element={<ActivityLogs />} />
               </Route>
             </Route>
           </Routes>
