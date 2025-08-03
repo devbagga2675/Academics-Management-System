@@ -40,8 +40,8 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn() {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = React.useState("dummyuser@gmail.com");
+  const [password, setPassword] = React.useState("########");
   const [emailError, setEmailError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
