@@ -209,7 +209,7 @@ const tempDummy = [
   };
 
   return (
-    <Stack direction="column" spacing={2} sx={{ width: "100%" }}>
+    <Stack direction="column" spacing={2} paddingInline={2} paddingTop={2} sx={{ width: "100%",   }}>
       <Stack direction="row" spacing={2} alignItems="start">
         <Box
           sx={{

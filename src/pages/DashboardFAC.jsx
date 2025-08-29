@@ -9,10 +9,8 @@ const DashboardFAC = () => {
       <Topbar />
       <Stack
         spacing={2}
-        paddingInline={2}
-        paddingTop={1}
         direction={"column"}
-        sx={{ paddingTop: "72px", width: "100vw" }}
+        sx={{ paddingTop: "65px", width: "100vw" }}
       >
         <Outlet />
       </Stack>
